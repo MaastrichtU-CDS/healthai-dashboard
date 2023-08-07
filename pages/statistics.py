@@ -36,7 +36,7 @@ input_ = {
         'org_ids': [7, 8],
         'cutoff': cutoff,
         'delta': delta
-    },
+    }
 }
 
 task = client.task.create(
