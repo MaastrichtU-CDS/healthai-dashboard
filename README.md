@@ -39,8 +39,11 @@ method and install the dependencies from the requirements list:
 
 ``` bash
 pip install -r requirements.txt 
+cp pages/config_example.py pages/config.py
 ```
 
+Notice that you need to edit the file `config.py` with the appropriate input
+for the vantage6 user client. 
 This code was developed and tested with Python 3.10.
 
 ### Run dashboard
@@ -50,12 +53,8 @@ then running the `index.py` script, an example of how to do it:
 
 ``` bash
 source .venv/bin/activate 
-cp pages/config_example.py pages/config.py
 python index.py
 ```
-
-Notice that you need to edit the file `config.py` with the appropriate input 
-for the vantage6 user client.
 
 ## Acknowledgments
 
