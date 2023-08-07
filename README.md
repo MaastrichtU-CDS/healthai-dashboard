@@ -30,7 +30,7 @@ TNM stages (`t`, `n`, `m`), overall cancer stage (`stage`), diagnosis date
 (`date_of_diagnosis`), date of last follow-up (`date_of_fu`), and patient vital 
 status (`vital_status`). If you have data nodes holding this type of data and 
 following the same standard for the data content, you can run the dashboard 
-with the following steps:
+with the following steps.
 
 ### Install the dependencies
 
@@ -55,5 +55,5 @@ python index.py
 
 ## Acknowledgments
 
-This project was financially supported by the [AiNed foundation]
-(https://ained.nl/over-ained/).
+This project was financially supported by the 
+[AiNed foundation](https://ained.nl/over-ained/).
