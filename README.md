@@ -18,9 +18,9 @@ and provide material that can be used as a template in any sector.
 ## Federated learning infrastructures
 
 In this project we use two different federated learning infrastructures:
-[Vantage6](https://vantage6.ai/) and [International Data Spaces - IDS]
-(https://tno-tsg.gitlab.io/docs/overview/).
-Their documentation explains how to deploy the different infrastructures.
+[Vantage6](https://vantage6.ai/) and 
+[International Data Spaces - IDS](https://tno-tsg.gitlab.io/docs/overview/).
+Their documentations explain how to deploy the different infrastructures.
 
 ## Run dashboard
 
