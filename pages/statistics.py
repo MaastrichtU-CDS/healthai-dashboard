@@ -3,10 +3,8 @@
 """
 TNM statistics
 """
-import os
 import time
 
-import numpy as np
 import pandas as pd
 import plotly.express as px
 
@@ -29,18 +27,24 @@ client.authenticate(config.username, config.password)
 client.setup_encryption(None)
 
 # Run vantage6 task that retrieves the statistics
+cutoff = 730
+delta = 30
 input_ = {
     'method': 'master',
     'master': True,
-    'kwargs': {'org_ids': [7, 8]},
+    'kwargs': {
+        'org_ids': [7, 8],
+        'cutoff': cutoff,
+        'delta': delta
+    },
 }
 
 task = client.task.create(
     collaboration=2,
     organizations=[7, 8],
-    name='v6-nids-py',
-    image='aiaragomes/v6-nids-py:latest',
-    description='get patients per centre',
+    name='v6-healthai-dashboard-py',
+    image='aiaragomes/v6-healthai-dashboard-py:latest',
+    description='get tnm statistics',
     input=input_,
     data_format='json'
 )
@@ -53,31 +57,39 @@ while not task_info.get('complete'):
 result_info = client.result.list(task=task_info['id'])
 results = result_info['data'][0]['result']
 
-# Read data
-df = pd.read_csv('data/lung_reduced.csv')
-df['date_of_diagnosis'] = pd.to_datetime(df['date_of_diagnosis'])
-df['date_of_fu'] = pd.to_datetime(df['date_of_fu'])
-df['days'] = df.apply(
-    lambda x: (x['date_of_fu'] - x['date_of_diagnosis']).days, axis=1
-)
-
 # Patients per centre
 dfg1 = pd.DataFrame({
-    'id': [result['nids'] for result in results],
+    'patients': [result['nids'] for result in results],
     'centre': [result['organisation'] for result in results]
 })
 
 # Patients per centre per stage
-dfg2 = df.groupby(['centre', 'stage'])['id'].nunique().reset_index()
+dfg2 = pd.DataFrame()
+for result in results:
+    tmp = pd.DataFrame(result['stages'])
+    tmp['centre'] = result['organisation']
+    dfg2 = dfg2.append(tmp)
+dfg2.rename(columns={'id': 'patients'}, inplace=True)
 
 # Patients per centre per vital status
-dfg3 = df.groupby(['centre', 'vital_status'])['id'].nunique().reset_index()
+dfg3 = pd.DataFrame()
+for result in results:
+    tmp = pd.DataFrame(result['vital_status'])
+    tmp['centre'] = result['organisation']
+    dfg3 = dfg3.append(tmp)
+dfg3.rename(
+    columns={'id': 'patients', 'vital_status': 'vital status'}, inplace=True
+)
 
-# Interval between diagnosis and follow up
-bins = [0, 3*31, 6*31, 9*31, 12*31, 15*31, 18*31, 21*31, 24*30, np.Inf]
-df['days'] = pd.cut(df['days'], bins)
-dfg4 = df.groupby(['centre', 'days'])['id'].nunique().reset_index()
-dfg4['days'] = dfg4['days'].apply(lambda x: x.right)
+# Survival rate profile per centre
+dfg4 = pd.DataFrame()
+for result in results:
+    tmp = pd.DataFrame({
+        'survival rate': result['survival'],
+        'survival days': list(range(0, cutoff, delta))
+    })
+    tmp['centre'] = result['organisation']
+    dfg4 = dfg4.append(tmp)
 
 
 # ------------------------------------------------------------------------------
@@ -89,7 +101,7 @@ layout = html.Div([
     html.P(),
     html.Div([
         dcc.Graph(
-            figure = px.bar(dfg1, x='centre', y='id')
+            figure = px.bar(dfg1, x='centre', y='patients')
         ),
     ],
     style={
@@ -97,7 +109,7 @@ layout = html.Div([
     }),
     html.Div([
         dcc.Graph(
-            figure=px.bar(dfg2, x='centre', y='id', color='stage')
+            figure=px.bar(dfg2, x='centre', y='patients', color='stage')
         ),
     ],
     style={
@@ -105,7 +117,7 @@ layout = html.Div([
     }),
     html.Div([
         dcc.Graph(
-            figure=px.bar(dfg3, x='centre', y='id', color='vital_status')
+            figure=px.bar(dfg3, x='centre', y='patients', color='vital status')
         ),
     ],
     style={
@@ -113,7 +125,9 @@ layout = html.Div([
     }),
     html.Div([
         dcc.Graph(
-            figure=px.bar(dfg4, x='days', y='id', color='centre')
+            figure=px.line(
+                dfg4, x='survival days', y='survival rate', color='centre'
+            )
         ),
     ],
     style={

@@ -37,7 +37,9 @@ sidebar = html.Div(
         html.Hr(),
         dbc.Nav(
             [
-                dbc.NavItem(dbc.NavLink('Home', href='/', active='exact')),
+                dbc.NavItem(dbc.NavLink(
+                    'Home', href='/', active='exact'
+                )),
                 dbc.NavItem(dbc.NavLink(
                     'Statistics', href='/statistics', active='exact'
                 )),
@@ -45,7 +47,7 @@ sidebar = html.Div(
                     'Survival', href='/survival', active='exact'
                 )),
                 dbc.NavItem(dbc.NavLink(
-                    'Similar patients', href='/similarity', active='exact'
+                    'Similar patients', href='/similar', active='exact'
                 ))
             ],
             vertical='md',
@@ -75,7 +77,10 @@ app.layout = html.Div([dcc.Location(id='url', refresh=True), sidebar, content])
 # ------------------------------------------------------------------------------
 # Render page
 # ------------------------------------------------------------------------------
-@app.callback(Output('page-content', 'children'), [Input('url', 'pathname')])
+@app.callback(
+    Output('page-content', 'children'),
+    [Input('url', 'pathname')]
+)
 def render_page_content(pathname):
     if pathname == '/':
         return home.layout
@@ -83,7 +88,7 @@ def render_page_content(pathname):
         return statistics.layout
     elif pathname == '/survival':
         return survival.layout
-    elif pathname == '/similarity':
+    elif pathname == '/similar':
         return similarity.layout
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron([
