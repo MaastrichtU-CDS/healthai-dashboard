@@ -7,4 +7,3 @@ server_api = "/api"
 
 username = "username"
 password = "password"
-

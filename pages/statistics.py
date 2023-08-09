@@ -12,7 +12,6 @@ from dash import dcc
 from dash import html
 from vantage6.client import Client
 
-from app import app
 from pages import config
 
 
@@ -101,28 +100,34 @@ layout = html.Div([
     html.P(),
     html.Div([
         dcc.Graph(
-            figure = px.bar(dfg1, x='centre', y='patients')
+            figure=px.bar(dfg1, x='centre', y='patients')
         ),
     ],
-    style={
-        'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'
-    }),
+        style={
+            'width': '49%', 'display': 'inline-block',
+            'vertical-align': 'middle'
+        }
+    ),
     html.Div([
         dcc.Graph(
             figure=px.bar(dfg2, x='centre', y='patients', color='stage')
         ),
     ],
-    style={
-        'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'
-    }),
+        style={
+            'width': '49%', 'display': 'inline-block',
+            'vertical-align': 'middle'
+        }
+    ),
     html.Div([
         dcc.Graph(
             figure=px.bar(dfg3, x='centre', y='patients', color='vital status')
         ),
     ],
-    style={
-        'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'
-    }),
+        style={
+            'width': '49%', 'display': 'inline-block',
+            'vertical-align': 'middle'
+        }
+    ),
     html.Div([
         dcc.Graph(
             figure=px.line(
@@ -130,9 +135,10 @@ layout = html.Div([
             )
         ),
     ],
-    style={
-        'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'
-    }),
+        style={
+            'width': '49%', 'display': 'inline-block',
+            'vertical-align': 'middle'
+        }
+    ),
     html.P()
 ])
-

@@ -34,8 +34,8 @@ with the following steps.
 
 ### Install the dependencies
 
-We advise you to create a Python virtual environment using your favourite 
-method and install the dependencies from the requirements list:
+We advise you to create a Python virtual environment, using your favourite 
+method, and install the dependencies from the requirements list:
 
 ``` bash
 pip install -r requirements.txt 

@@ -3,5 +3,4 @@
 data/
 __pycache__/
 record.log
-data.py
 pages/config.py
