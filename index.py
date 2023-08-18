@@ -84,8 +84,8 @@ app.layout = html.Div([dcc.Location(id='url', refresh=True), sidebar, content])
 def render_page_content(pathname):
     if pathname == '/':
         return home.layout
-    elif pathname == '/statistics':
-        return statistics.layout
+    # elif pathname == '/statistics':
+    #     return statistics.layout
     elif pathname == '/survival':
         return survival.layout
     elif pathname == '/similar':
