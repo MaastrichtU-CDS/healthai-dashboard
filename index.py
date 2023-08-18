@@ -13,7 +13,7 @@ from dash.dependencies import Output
 
 from app import app
 from pages import home
-from pages import statistics
+# from pages import statistics
 from pages import survival
 from pages import similarity
 
