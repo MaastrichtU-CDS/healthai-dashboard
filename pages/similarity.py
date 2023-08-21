@@ -7,6 +7,7 @@ import os
 import time
 import json
 
+import numpy as np
 import pandas as pd
 import plotly.express as px
 
@@ -76,6 +77,12 @@ centroids = result_info['data'][0]['result']['centroids']
 input_path = os.path.join(os.getcwd(), 'input')
 cdm_file = os.path.join(input_path, 'cdm.json')
 cdm = json.load(open(cdm_file))
+t_values = cdm['t']['values']
+t_nvalues = list(range(len(t_values)))
+n_values = cdm['n']['values']
+n_nvalues = list(range(len(n_values)))
+m_values = cdm['m']['values']
+m_nvalues = list(range(len(m_values)))
 
 
 # ------------------------------------------------------------------------------
@@ -137,7 +144,16 @@ layout = html.Div([
 )
 def survival_profile(t, n, m):
     if t and n and m:
-        # TODO: convert from categorical to numerical TNM
+        # Convert from categorical to numerical TNM
+        t_idx = np.where(np.array(t_values) == t)[0][0]
+        t = t_nvalues[t_idx]
+
+        n_idx = np.where(np.array(n_values) == n)[0][0]
+        n = n_nvalues[n_idx]
+
+        m_idx = np.where(np.array(m_values) == m)[0][0]
+        m = m_nvalues[m_idx]
+
         # TODO: get closest cluster
         # TODO: plot survival profile for the closest cluster
 
