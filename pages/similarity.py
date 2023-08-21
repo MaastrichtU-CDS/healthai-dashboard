@@ -15,6 +15,7 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input
 from dash.dependencies import Output
+from scipy.spatial import distance
 from vantage6.client import Client
 
 from pages import config
@@ -24,43 +25,49 @@ from app import app
 # ------------------------------------------------------------------------------
 # Get clusters with federated kmeans
 # ------------------------------------------------------------------------------
-# Initialize the vantage6 client object, and run the authentication
-client = Client(
-    config.server_url, config.server_port, config.server_api, verbose=True
-)
-client.authenticate(config.username, config.password)
-client.setup_encryption(None)
-
-# Run vantage6 task that retrieves cluster centroids
-input_ = {
-    'method': 'master',
-    'master': True,
-    'kwargs': {
-        'org_ids': [7, 8],
-        'k': 4,
-        'epsilon': 0.05,
-        'max_iter': 5,
-        'columns': ['t_num', 'n_num', 'm_num']
-    }
-}
-
-task = client.task.create(
-    collaboration=2,
-    organizations=[7, 8],
-    name='v6-kmeans-py',
-    image='aiaragomes/v6-kmeans-py:latest',
-    description='run kmeans',
-    input=input_,
-    data_format='json'
-)
-
-task_info = client.task.get(task['id'], include_results=True)
-while not task_info.get('complete'):
-    task_info = client.task.get(task['id'], include_results=True)
-    time.sleep(3)
-
-result_info = client.result.list(task=task_info['id'])
-centroids = result_info['data'][0]['result']['centroids']
+# # Initialize the vantage6 client object, and run the authentication
+# client = Client(
+#     config.server_url, config.server_port, config.server_api, verbose=True
+# )
+# client.authenticate(config.username, config.password)
+# client.setup_encryption(None)
+#
+# # Run vantage6 task that retrieves cluster centroids
+# input_ = {
+#     'method': 'master',
+#     'master': True,
+#     'kwargs': {
+#         'org_ids': [7, 8],
+#         'k': 4,
+#         'epsilon': 0.05,
+#         'max_iter': 5,
+#         'columns': ['t_num', 'n_num', 'm_num']
+#     }
+# }
+#
+# task = client.task.create(
+#     collaboration=2,
+#     organizations=[7, 8],
+#     name='v6-kmeans-py',
+#     image='aiaragomes/v6-kmeans-py:latest',
+#     description='run kmeans',
+#     input=input_,
+#     data_format='json'
+# )
+#
+# task_info = client.task.get(task['id'], include_results=True)
+# while not task_info.get('complete'):
+#     task_info = client.task.get(task['id'], include_results=True)
+#     time.sleep(3)
+#
+# result_info = client.result.list(task=task_info['id'])
+# centroids = result_info['data'][0]['result']['centroids']
+centroids = [
+    [3.0621890547263684, 1.2148531535869043, 0.5308136735676456],
+    [8.708690680388793, 1.4456832475700399, 3.1759576901086337],
+    [8.826556629092861, 4.997942386831276, 2.114801395598497],
+    [8.832401278246977, 1.0226166019934566, 0.09430875751350531]
+]
 
 
 # ------------------------------------------------------------------------------
@@ -77,10 +84,13 @@ centroids = result_info['data'][0]['result']['centroids']
 input_path = os.path.join(os.getcwd(), 'input')
 cdm_file = os.path.join(input_path, 'cdm.json')
 cdm = json.load(open(cdm_file))
+
 t_values = cdm['t']['values']
 t_nvalues = list(range(len(t_values)))
+
 n_values = cdm['n']['values']
 n_nvalues = list(range(len(n_values)))
+
 m_values = cdm['m']['values']
 m_nvalues = list(range(len(m_values)))
 
@@ -154,9 +164,13 @@ def survival_profile(t, n, m):
         m_idx = np.where(np.array(m_values) == m)[0][0]
         m = m_nvalues[m_idx]
 
-        # TODO: get closest cluster
-        # TODO: plot survival profile for the closest cluster
+        # Get closest cluster
+        xi = [t, n, m]
+        distances = [distance.euclidean(xi, xj) for xj in centroids]
+        idx = np.argmin(distances)
+        membership = centroids[idx]
 
+        # TODO: plot survival profile for the closest cluster
         # Output for UI
         return html.Div([
             html.H4('Survival profile for similar patients:'),
