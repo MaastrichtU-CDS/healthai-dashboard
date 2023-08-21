@@ -3,7 +3,9 @@
 """
 TNM patient similarity
 """
+import os
 import time
+import json
 
 import pandas as pd
 import plotly.express as px
@@ -37,7 +39,7 @@ input_ = {
         'k': 4,
         'epsilon': 0.05,
         'max_iter': 5,
-        'columns': ['t', 'n', 'm']
+        'columns': ['t_num', 'n_num', 'm_num']
     }
 }
 
@@ -58,7 +60,6 @@ while not task_info.get('complete'):
 
 result_info = client.result.list(task=task_info['id'])
 centroids = result_info['data'][0]['result']['centroids']
-# centroids = [[1, 0, 0], [2, 1, 0], [3, 2, 0], [4, 3, 1]]
 
 
 # ------------------------------------------------------------------------------
@@ -67,6 +68,14 @@ centroids = result_info['data'][0]['result']['centroids']
 # TODO: compute survival profiles, for that we need another v6
 #  algorithm that takes the centroids as input and sends tasks to get
 #  the average survival profile for the clusters
+
+
+# ------------------------------------------------------------------------------
+# TNM common data model
+# ------------------------------------------------------------------------------
+input_path = os.path.join(os.getcwd(), 'input')
+cdm_file = os.path.join(input_path, 'cdm.json')
+cdm = json.load(open(cdm_file))
 
 
 # ------------------------------------------------------------------------------
@@ -79,10 +88,7 @@ layout = html.Div([
     html.H4('Patient diagnosed with:'),
     html.Div(
         dcc.Dropdown(
-            options=[
-                'T0', 'T1', 'T1a', 'T1b', 'T1c', 'T2', 'T2a', 'T2b',
-                'T3', 'T3a', 'T4'
-            ],
+            options=cdm['t']['values'],
             placeholder='T stage',
             id='input-tstage'
         ),
@@ -93,9 +99,7 @@ layout = html.Div([
     ),
     html.Div(
         dcc.Dropdown(
-            options=[
-                'N0', 'N1', 'N2', 'N2b', 'N2c', 'N3'
-            ],
+            options=cdm['n']['values'],
             placeholder='N stage',
             id='input-nstage'
         ),
@@ -106,9 +110,7 @@ layout = html.Div([
     ),
     html.Div(
         dcc.Dropdown(
-            options=[
-                'M0', 'M1', 'M1a', 'M1b', 'M1c'
-            ],
+            options=cdm['m']['values'],
             placeholder='M stage',
             id='input-mstage'
         ),
