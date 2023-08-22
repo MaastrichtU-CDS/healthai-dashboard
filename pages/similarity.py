@@ -23,59 +23,46 @@ from app import app
 
 
 # ------------------------------------------------------------------------------
-# Get clusters with federated kmeans
+# Get clusters and survival profiles
 # ------------------------------------------------------------------------------
-# # Initialize the vantage6 client object, and run the authentication
-# client = Client(
-#     config.server_url, config.server_port, config.server_api, verbose=True
-# )
-# client.authenticate(config.username, config.password)
-# client.setup_encryption(None)
-#
-# # Run vantage6 task that retrieves cluster centroids
-# input_ = {
-#     'method': 'master',
-#     'master': True,
-#     'kwargs': {
-#         'org_ids': [7, 8],
-#         'k': 4,
-#         'epsilon': 0.05,
-#         'max_iter': 5,
-#         'columns': ['t_num', 'n_num', 'm_num']
-#     }
-# }
-#
-# task = client.task.create(
-#     collaboration=2,
-#     organizations=[7, 8],
-#     name='v6-kmeans-py',
-#     image='aiaragomes/v6-kmeans-py:latest',
-#     description='run kmeans',
-#     input=input_,
-#     data_format='json'
-# )
-#
-# task_info = client.task.get(task['id'], include_results=True)
-# while not task_info.get('complete'):
-#     task_info = client.task.get(task['id'], include_results=True)
-#     time.sleep(3)
-#
-# result_info = client.result.list(task=task_info['id'])
-# centroids = result_info['data'][0]['result']['centroids']
-centroids = [
-    [3.0621890547263684, 1.2148531535869043, 0.5308136735676456],
-    [8.708690680388793, 1.4456832475700399, 3.1759576901086337],
-    [8.826556629092861, 4.997942386831276, 2.114801395598497],
-    [8.832401278246977, 1.0226166019934566, 0.09430875751350531]
-]
+# Initialize the vantage6 client object, and run the authentication
+client = Client(
+    config.server_url, config.server_port, config.server_api, verbose=True
+)
+client.authenticate(config.username, config.password)
+client.setup_encryption(None)
 
+# Run vantage6 task that retrieves cluster centroids
+input_ = {
+    'method': 'master',
+    'master': True,
+    'kwargs': {
+        'org_ids': [7, 8],
+        'k': 4,
+        'epsilon': 0.05,
+        'max_iter': 5,
+        'columns': ['t_num', 'n_num', 'm_num']
+    }
+}
 
-# ------------------------------------------------------------------------------
-# Get averaged survival profiles for the clusters
-# ------------------------------------------------------------------------------
-# TODO: compute survival profiles, for that we need another v6
-#  algorithm that takes the centroids as input and sends tasks to get
-#  the average survival profile for the clusters
+task = client.task.create(
+    collaboration=2,
+    organizations=[7, 8],
+    name='v6-healthai-paient-similarity-py',
+    image='aiaragomes/v6-healthai-paient-similarity-py:latest',
+    description='run tnm patient similarity',
+    input=input_,
+    data_format='json'
+)
+
+task_info = client.task.get(task['id'], include_results=True)
+while not task_info.get('complete'):
+    task_info = client.task.get(task['id'], include_results=True)
+    time.sleep(3)
+
+result_info = client.result.list(task=task_info['id'])
+centroids = result_info['data'][0]['result']['centroids']
+profiles = result_info['data'][0]['result']['profiles']
 
 
 # ------------------------------------------------------------------------------
@@ -168,15 +155,19 @@ def survival_profile(t, n, m):
         xi = [t, n, m]
         distances = [distance.euclidean(xi, xj) for xj in centroids]
         idx = np.argmin(distances)
-        membership = centroids[idx]
 
-        # TODO: plot survival profile for the closest cluster
+        # Survival profile for the closest cluster
+        dfp = pd.DataFrame({
+            'survival rate': profiles[idx],
+            'survival days': list(range(0, 730, 30))
+        })
+
         # Output for UI
         return html.Div([
             html.H4('Survival profile for similar patients:'),
             dcc.Graph(
                 figure=px.line(
-                    x=list(range(15)), y=list(range(15))
+                    dfp, x='survival days', y='survival rate'
                 ),
                 id='output-survival-profile'
             ),
