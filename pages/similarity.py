@@ -10,6 +10,7 @@ import json
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import dash_bootstrap_components as dbc
 
 from dash import dcc
 from dash import html
@@ -23,46 +24,10 @@ from app import app
 
 
 # ------------------------------------------------------------------------------
-# Get clusters and survival profiles
+# Global variables
 # ------------------------------------------------------------------------------
-# Initialize the vantage6 client object, and run the authentication
-client = Client(
-    config.server_url, config.server_port, config.server_api, verbose=True
-)
-client.authenticate(config.username, config.password)
-client.setup_encryption(None)
-
-# Run vantage6 task that retrieves cluster centroids
-input_ = {
-    'method': 'master',
-    'master': True,
-    'kwargs': {
-        'org_ids': [7, 8],
-        'k': 4,
-        'epsilon': 0.05,
-        'max_iter': 5,
-        'columns': ['t_num', 'n_num', 'm_num']
-    }
-}
-
-task = client.task.create(
-    collaboration=2,
-    organizations=[7, 8],
-    name='v6-healthai-paient-similarity-py',
-    image='aiaragomes/v6-healthai-paient-similarity-py:latest',
-    description='run tnm patient similarity',
-    input=input_,
-    data_format='json'
-)
-
-task_info = client.task.get(task['id'], include_results=True)
-while not task_info.get('complete'):
-    task_info = client.task.get(task['id'], include_results=True)
-    time.sleep(3)
-
-result_info = client.result.list(task=task_info['id'])
-centroids = result_info['data'][0]['result']['centroids']
-profiles = result_info['data'][0]['result']['profiles']
+centroids = None
+profiles = None
 
 
 # ------------------------------------------------------------------------------
@@ -88,6 +53,10 @@ m_nvalues = list(range(len(m_values)))
 layout = html.Div([
     html.H1('Patient similarity'),
     html.Hr(),
+    html.P(),
+    dbc.Button('Run analysis', id='similarity-analysis', n_clicks=0),
+    html.P(),
+    html.Div(id='output-similarity'),
     html.P(),
     html.H4('Patient diagnosed with:'),
     html.Div(
@@ -133,6 +102,68 @@ layout = html.Div([
 # ------------------------------------------------------------------------------
 # Callbacks
 # ------------------------------------------------------------------------------
+@app.callback(
+    Output('output-similarity', 'children'),
+    [Input('similarity-analysis', 'n_clicks')]
+)
+def run_federated_similarity_analysis(n_clicks):
+    global centroids
+    global profiles
+
+    if n_clicks > 0:
+        # Initialize the vantage6 client object, and run the authentication
+        client = Client(
+            config.server_url, config.server_port, config.server_api,
+            verbose=True
+        )
+        client.authenticate(config.username, config.password)
+        client.setup_encryption(None)
+
+        # Run vantage6 task that retrieves cluster centroids
+        input_ = {
+            'method': 'master',
+            'master': True,
+            'kwargs': {
+                'org_ids': [7, 8],
+                'k': 4,
+                'epsilon': 0.05,
+                'max_iter': 5,
+                'columns': ['t_num', 'n_num', 'm_num']
+            }
+        }
+
+        task = client.task.create(
+            collaboration=2,
+            organizations=[7, 8],
+            name='v6-healthai-paient-similarity-py',
+            image='aiaragomes/v6-healthai-paient-similarity-py:latest',
+            description='run tnm patient similarity',
+            input=input_,
+            data_format='json'
+        )
+
+        task_info = client.task.get(task['id'], include_results=True)
+        while not task_info.get('complete'):
+            task_info = client.task.get(task['id'], include_results=True)
+            time.sleep(3)
+
+        result_info = client.result.list(task=task_info['id'])
+        centroids = result_info['data'][0]['result']['centroids']
+        profiles = result_info['data'][0]['result']['profiles']
+
+        # Output for UI
+        if centroids and profiles:
+            return html.Div([
+                html.Plaintext('Similarity analysis completed!'),
+            ])
+        else:
+            return html.Div(
+                html.Plaintext('Something went wrong...')
+            )
+    else:
+        return html.Plaintext('')
+
+
 @app.callback(
     Output('output-survival-profile', 'children'),
     [Input('input-tstage', 'value'),
