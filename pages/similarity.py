@@ -190,7 +190,7 @@ def get_similarity_analysis_results(n_clicks):
             centroids = result_info['data'][0]['result']['centroids']
             profiles = result_info['data'][0]['result']['profiles']
             end = result_info['data'][0]['finished_at']
-            duration = (parser.parse(end).timestamp() - start)/60.
+            duration = round((parser.parse(end).timestamp() - start)/60., 3)
 
         # Output for UI
         if centroids and profiles:
