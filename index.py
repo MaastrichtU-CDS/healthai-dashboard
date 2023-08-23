@@ -13,7 +13,7 @@ from dash.dependencies import Output
 
 from app import app
 from pages import home
-# from pages import statistics
+from pages import statistics
 from pages import survival
 from pages import similarity
 
@@ -85,8 +85,8 @@ app.layout = html.Div([dcc.Location(id='url', refresh=True), sidebar, content])
 def render_page_content(pathname):
     if pathname == '/':
         return home.layout
-    # elif pathname == '/statistics':
-    #     return statistics.layout
+    elif pathname == '/statistics':
+        return statistics.layout
     elif pathname == '/survival':
         return survival.layout
     elif pathname == '/similarity':
