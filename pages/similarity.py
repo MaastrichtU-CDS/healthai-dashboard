@@ -183,7 +183,6 @@ def get_similarity_analysis_results(n_clicks):
 
     if n_clicks > 0:
         # Get results for similarity analysis
-        time.sleep(5)
         task_info = client.task.get(task['id'], include_results=True)
         if task_info.get('complete'):
             result_info = client.result.list(task=task_info['id'])
