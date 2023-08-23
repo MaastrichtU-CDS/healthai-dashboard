@@ -194,7 +194,7 @@ def get_similarity_analysis_results(n_clicks):
         # Output for UI
         if centroids and profiles:
             return html.Div([
-                html.Plaintext(f'Analysis completed in {duration} minutes.'),
+                html.Plaintext(f'Analysis completed in {duration} minutes'),
             ])
         else:
             return html.Div(

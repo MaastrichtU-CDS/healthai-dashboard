@@ -37,7 +37,7 @@ layout = html.Div([
     html.H1('Statistics'),
     html.Hr(),
     html.P(),
-    dbc.Button('Get statistics', id='send-stats-task', n_clicks=0),
+    dbc.Button('Send task', id='send-stats-task', n_clicks=0),
     dcc.Loading(
         id='loading-statistics-task', type='default',
         children=html.Div(id='output-statistics-task')
@@ -167,7 +167,7 @@ def get_statistics(n_clicks):
         # Output for UI
         if results:
             return html.Div([
-                html.Plaintext(f'Analysis completed in {duration} seconds.'),
+                html.Plaintext(f'Analysis completed in {duration} seconds'),
                 html.P(),
                 html.Div([
                     dcc.Graph(
