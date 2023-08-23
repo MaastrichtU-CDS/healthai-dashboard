@@ -47,7 +47,8 @@ sidebar = html.Div(
                     'Survival', href='/survival', active='exact'
                 )),
                 dbc.NavItem(dbc.NavLink(
-                    'Similar patients', href='/similar', active='exact'
+                    'Similar patients', href='/similarity',
+                    active='exact'
                 ))
             ],
             vertical='md',
@@ -88,7 +89,7 @@ def render_page_content(pathname):
     #     return statistics.layout
     elif pathname == '/survival':
         return survival.layout
-    elif pathname == '/similar':
+    elif pathname == '/similarity':
         return similarity.layout
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron([
