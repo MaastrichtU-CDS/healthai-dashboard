@@ -205,7 +205,7 @@ def get_statistics(n_clicks):
                     dcc.Graph(
                         figure=px.line(
                             dfg4, x='survival days', y='survival rate',
-                            color='centre'
+                            range_y=[0, 1], color='centre'
                         )
                     ),
                 ],
