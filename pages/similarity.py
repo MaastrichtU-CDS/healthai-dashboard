@@ -4,6 +4,7 @@
 TNM patient similarity
 """
 import os
+import re
 import time
 import json
 
@@ -40,15 +41,6 @@ profiles = None
 input_path = os.path.join(os.getcwd(), 'input')
 cdm_file = os.path.join(input_path, 'cdm.json')
 cdm = json.load(open(cdm_file))
-
-t_values = cdm['t']['values']
-t_nvalues = list(range(len(t_values)))
-
-n_values = cdm['n']['values']
-n_nvalues = list(range(len(n_values)))
-
-m_values = cdm['m']['values']
-m_nvalues = list(range(len(m_values)))
 
 
 # ------------------------------------------------------------------------------
@@ -140,7 +132,7 @@ def send_similarity_analysis_task(n_clicks):
                 'k': 4,
                 'epsilon': 0.01,
                 'max_iter': 50,
-                'columns': ['t_num', 'n_num', 'm_num']
+                'columns': ['t', 'n', 'm']
             }
         }
 
@@ -213,14 +205,9 @@ def get_similarity_analysis_results(n_clicks):
 def survival_profile(t, n, m):
     if t and n and m:
         # Convert from categorical to numerical TNM
-        t_idx = np.where(np.array(t_values) == t)[0][0]
-        t = t_nvalues[t_idx]
-
-        n_idx = np.where(np.array(n_values) == n)[0][0]
-        n = n_nvalues[n_idx]
-
-        m_idx = np.where(np.array(m_values) == m)[0][0]
-        m = m_nvalues[m_idx]
+        t = int(re.compile(r'\d').findall(t)[0])
+        n = int(re.compile(r'\d').findall(n)[0])
+        m = int(re.compile(r'\d').findall(m)[0])
 
         # Get closest cluster
         xi = [t, n, m]
