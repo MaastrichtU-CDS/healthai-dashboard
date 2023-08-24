@@ -42,7 +42,7 @@ docker run --rm -d \
     --name healthai-dashboard \
     -p 5000:5000 \
     -v $(pwd)/pages/config.py:/pages/config.py:ro \
-    ghcr.io/maastrichtu-cds/healthai-dashboard:latest
+    ghcr.io/maastrichtu-cds/healthai_dashboard:latest
 ```
 
 Notice that you need to edit the `config.py` file, with the appropriate input
