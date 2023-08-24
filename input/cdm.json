@@ -7,25 +7,25 @@
     "description": "patient t stage",
     "type": "categorical",
     "values": [
-      "T0", "T1", "T1a", "T1b", "T1c", "T2", "T2a", "T2b", "T3", "T3a", "T4"
+      "T1a", "T1b", "T1c", "T2a", "T2b", "T3", "T4"
     ]
   },
   "n": {
     "description": "patient n stage",
     "type": "categorical",
-    "values": ["N0", "N1", "N2", "N2b", "N2c", "N3"]
+    "values": ["N0", "N1", "N2", "N3"]
   },
   "m": {
     "description": "patient m stage",
     "type": "categorical",
-    "values": ["M0", "M1", "M1a", "M1b", "M1c"]
+    "values": ["M0", "M1a", "M1b", "M1c"]
   },
   "stage": {
     "description": "patient overall stage",
     "type": "categorical",
     "values": [
-      "occult", "0", "IA1", "IA2", "IA3", "IB", "IIA", "IIB", "IIIA", "IIIB",
-      "IIIC", "IVA", "IVB"
+      "IA1", "IA2", "IA3", "IB", "IIA", "IIB", "IIIA", "IIIB", "IIIC",
+      "IVA", "IVB"
     ]
   },
   "date_of_diagnosis": {
