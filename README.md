@@ -34,19 +34,24 @@ with the following steps.
 
 ### Run with docker
 
-You can run the dashboard with docker. From the project directory you can do:
+You can run the dashboard with docker. From the project directory, first 
+create and edit the `config.py` file with the appropriate input for the 
+vantage6 user client.
 
 ``` bash
 cp pages/config_example.py pages/config.py
+```
+
+After that, you can simply run the following docker command to start the 
+dashboard:
+
+``` bash
 docker run --rm -d \
     --name healthai-dashboard \
     -p 5000:5000 \
     -v $(pwd)/pages/config.py:/pages/config.py:ro \
-    ghcr.io/maastrichtu-cds/healthai_dashboard:latest
+    ghcr.io/maastrichtu-cds/healthai-dashboard:latest
 ```
-
-Notice that you need to edit the `config.py` file, with the appropriate input
-for the vantage6 user client, before running the docker command. 
 
 ### Run locally
 
