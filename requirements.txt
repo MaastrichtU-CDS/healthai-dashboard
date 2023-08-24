@@ -6,3 +6,5 @@ dash-html-components==2.0.0
 dash-table==5.0.0
 pandas==1.4.1
 flake8==6.1.0
+vantage6-client==3.10.4
+scipy==1.11.2
