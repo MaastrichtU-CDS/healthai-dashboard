@@ -1,0 +1,6 @@
+.venv
+.gitignore
+*.sh
+*.csv
+*.log
+pages/config.py
