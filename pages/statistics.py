@@ -89,7 +89,7 @@ def send_statistics_task(n_clicks):
             collaboration=2,
             organizations=[7, 8],
             name='v6-healthai-dashboard-py',
-            image='aiaragomes/v6-healthai-dashboard-py:latest',
+            image='ghcr.io/maastrichtu-cds/v6-healthai-dashboard-py:latest',
             description='get tnm statistics',
             input=input_,
             data_format='json'
