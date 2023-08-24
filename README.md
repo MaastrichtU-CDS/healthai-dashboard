@@ -32,7 +32,25 @@ status (`vital_status`). If you have data nodes holding this type of data and
 following the same standard for the data content, you can run the dashboard 
 with the following steps.
 
-### Install the dependencies
+### Run with docker
+
+You can run the dashboard with docker. From the project directory you can do:
+
+``` bash
+cp pages/config_example.py pages/config.py
+docker run --rm -d \
+    --name healthai-dashboard \
+    -p 5000:5000 \
+    -v $(pwd)/pages/config.py:/pages/config.py:ro \
+    ghcr.io/maastrichtu-cds/healthai-dashboard:latest
+```
+
+Notice that you need to edit the `config.py` file, with the appropriate input
+for the vantage6 user client, before running the docker command. 
+
+### Run locally
+
+#### Install the dependencies
 
 We advise you to create a Python virtual environment, using your favourite 
 method, and install the dependencies from the requirements list:
@@ -42,11 +60,11 @@ pip install -r requirements.txt
 cp pages/config_example.py pages/config.py
 ```
 
-Notice that you need to edit the file `config.py` with the appropriate input
+Notice that you need to edit the `config.py` file with the appropriate input
 for the vantage6 user client. 
 This code was developed and tested with Python 3.10.
 
-### Run dashboard
+#### Run dashboard
 
 You can run the dashboard by simply activating your virtual environment and 
 then running the `index.py` script, an example of how to do it:
