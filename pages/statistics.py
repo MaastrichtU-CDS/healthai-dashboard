@@ -217,7 +217,7 @@ def get_statistics(n_clicks):
             ])
         else:
             return html.Div(
-                html.Plaintext('Still waiting for results, try again...')
+                html.Plaintext('Still waiting for results, try again later...')
             )
     else:
         return html.Plaintext('')

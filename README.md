@@ -22,15 +22,19 @@ In this project we use two different federated learning infrastructures:
 [International Data Spaces - IDS](https://tno-tsg.gitlab.io/docs/overview/).
 Their documentations explain how to deploy the different infrastructures.
 
+## Input data
+
+We assume that data nodes were deployed and that they hold TNM data of
+non-small cell lung cancer patients. In particular, a patient identifier (`id`),
+TNM stages (`t`, `n`, `m`), overall cancer stage (`stage`), diagnosis date
+(`date_of_diagnosis`), date of last follow-up (`date_of_fu`), and patient vital
+status (`vital_status`). The data should follow the common data model 
+described in the `cdm.json` file in the `input` directory.
+
 ## Run dashboard
 
-We assume that data nodes were deployed and that they hold TNM data of 
-non-small cell lung cancer patients. In particular, a patient identifier (`id`), 
-TNM stages (`t`, `n`, `m`), overall cancer stage (`stage`), diagnosis date 
-(`date_of_diagnosis`), date of last follow-up (`date_of_fu`), and patient vital 
-status (`vital_status`). If you have data nodes holding this type of data and 
-following the same standard for the data content, you can run the dashboard 
-with the following steps.
+You can run the dashboard either locally or using the docker image. Below 
+you can see the required steps for each case.
 
 ### Run with docker
 
