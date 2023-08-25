@@ -141,7 +141,7 @@ def send_similarity_analysis_task(n_clicks):
             collaboration=config.collaboration,
             organizations=config.org_ids,
             name='v6-healthai-paient-similarity-py',
-            image='ghcr.io/maastrichtu-cds/v6-healthai-patient-similarity-py:latest',
+            image=config.image_sim,
             description='run tnm patient similarity',
             input=input_,
             data_format='json'

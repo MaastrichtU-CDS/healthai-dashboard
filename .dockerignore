@@ -4,3 +4,4 @@
 *.csv
 *.log
 pages/config.py
+__pycache__
