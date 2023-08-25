@@ -26,8 +26,6 @@ from app import app
 client = None
 task = None
 start = None
-cutoff = 730
-delta = 30
 
 
 # ------------------------------------------------------------------------------
@@ -77,17 +75,17 @@ def send_statistics_task(n_clicks):
             'method': 'master',
             'master': True,
             'kwargs': {
-                'org_ids': [7, 8],
-                'cutoff': cutoff,
-                'delta': delta
+                'org_ids': config.org_ids,
+                'cutoff': config.cutoff,
+                'delta': config.delta
             }
         }
 
         # Create task to compute statistics
         start = time.time()
         task = client.task.create(
-            collaboration=2,
-            organizations=[7, 8],
+            collaboration=config.collaboration,
+            organizations=config.org_ids,
             name='v6-healthai-dashboard-py',
             image='ghcr.io/maastrichtu-cds/v6-healthai-dashboard-py:latest',
             description='get tnm statistics',
@@ -159,7 +157,7 @@ def get_statistics(n_clicks):
             for result in results:
                 tmp = pd.DataFrame({
                     'survival rate': result['survival'],
-                    'survival days': list(range(0, cutoff, delta))
+                    'survival days': list(range(0, config.cutoff, config.delta))
                 })
                 tmp['centre'] = result['organisation']
                 dfg4 = dfg4.append(tmp)

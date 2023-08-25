@@ -128,18 +128,18 @@ def send_similarity_analysis_task(n_clicks):
             'method': 'master',
             'master': True,
             'kwargs': {
-                'org_ids': [7, 8],
-                'k': 4,
-                'epsilon': 0.01,
-                'max_iter': 50,
-                'columns': ['t', 'n', 'm']
+                'org_ids': config.org_ids,
+                'k': config.k,
+                'epsilon': config.epsilon,
+                'max_iter': config.max_iter,
+                'columns': config.columns
             }
         }
 
         start = time.time()
         task = client.task.create(
-            collaboration=2,
-            organizations=[7, 8],
+            collaboration=config.collaboration,
+            organizations=config.org_ids,
             name='v6-healthai-paient-similarity-py',
             image='ghcr.io/maastrichtu-cds/v6-healthai-patient-similarity-py:latest',
             description='run tnm patient similarity',
@@ -217,7 +217,7 @@ def survival_profile(t, n, m):
         # Survival profile for the closest cluster
         dfp = pd.DataFrame({
             'survival rate': profiles[idx],
-            'survival days': list(range(0, 730, 30))
+            'survival days': list(range(0, config.cutoff, config.delta))
         })
 
         # Output for UI
