@@ -205,9 +205,12 @@ def get_similarity_analysis_results(n_clicks):
 def survival_profile(t, n, m):
     if t and n and m:
         # Convert from categorical to numerical TNM
-        t = int(re.compile(r'\d').findall(t)[0])
-        n = int(re.compile(r'\d').findall(n)[0])
-        m = int(re.compile(r'\d').findall(m)[0])
+        t = re.compile(r'\d').findall(t)
+        t = int(t[0]) if len(t) != 0 else -1
+        n = re.compile(r'\d').findall(n)
+        n = int(n[0]) if len(n) != 0 else -1
+        m = re.compile(r'\d').findall(m)
+        m = int(m[0]) if len(m) != 0 else -1
 
         # Get closest cluster
         xi = [t, n, m]
