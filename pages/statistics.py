@@ -129,24 +129,30 @@ def get_statistics(n_clicks):
 
             # Patients per centre
             dfg1 = pd.DataFrame({
-                'patients': [result['nids'] for result in results],
+                'patients': [
+                    result['nids'] for result in results
+                    if 'nids' in result.keys()
+                ],
                 'centre': [result['organisation'] for result in results]
             })
 
             # Patients per centre per stage
             dfg2 = pd.DataFrame()
             for result in results:
-                tmp = pd.DataFrame(result['stages'])
-                tmp['centre'] = result['organisation']
-                dfg2 = dfg2.append(tmp)
+                if 'stage' in result.keys():
+                    print(f'Came here for {result}')
+                    tmp = pd.DataFrame(result['stage'])
+                    tmp['centre'] = result['organisation']
+                    dfg2 = dfg2.append(tmp)
             dfg2.rename(columns={'id': 'patients'}, inplace=True)
 
             # Patients per centre per vital status
             dfg3 = pd.DataFrame()
             for result in results:
-                tmp = pd.DataFrame(result['vital_status'])
-                tmp['centre'] = result['organisation']
-                dfg3 = dfg3.append(tmp)
+                if 'vital_status' in result.keys():
+                    tmp = pd.DataFrame(result['vital_status'])
+                    tmp['centre'] = result['organisation']
+                    dfg3 = dfg3.append(tmp)
             dfg3.rename(
                 columns={'id': 'patients', 'vital_status': 'vital status'},
                 inplace=True
@@ -155,12 +161,14 @@ def get_statistics(n_clicks):
             # Survival rate profile per centre
             dfg4 = pd.DataFrame()
             for result in results:
-                tmp = pd.DataFrame({
-                    'survival rate': result['survival'],
-                    'survival days': list(range(0, config.cutoff, config.delta))
-                })
-                tmp['centre'] = result['organisation']
-                dfg4 = dfg4.append(tmp)
+                if 'survival' in result.keys():
+                    tmp = pd.DataFrame({
+                        'survival rate': result['survival'],
+                        'survival days':
+                            list(range(0, config.cutoff, config.delta))
+                    })
+                    tmp['centre'] = result['organisation']
+                    dfg4 = dfg4.append(tmp)
 
         # Output for UI
         if results:
