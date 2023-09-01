@@ -121,7 +121,7 @@ def send_similarity_analysis_task(n_clicks):
             verbose=True
         )
         client.authenticate(config.username, config.password)
-        client.setup_encryption(None)
+        client.setup_encryption(config.privkey_path)
 
         # Vantage6 task that runs TNM patient similarity
         input_ = {

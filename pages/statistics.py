@@ -68,7 +68,7 @@ def send_statistics_task(n_clicks):
             verbose=True
         )
         client.authenticate(config.username, config.password)
-        client.setup_encryption(None)
+        client.setup_encryption(config.privkey_path)
 
         # Input for task that retrieves the statistics
         input_ = {

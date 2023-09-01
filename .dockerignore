@@ -3,5 +3,6 @@
 *.sh
 *.csv
 *.log
+*.pem
 pages/config.py
 __pycache__
