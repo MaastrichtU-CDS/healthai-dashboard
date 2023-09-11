@@ -1,3 +1,4 @@
 [flake8]
-exclude = __pycache__,.pytest_cache,.venv,venv
+exclude = __pycache__,.pytest_cache,.venv,venv,config.py
+extend-ignore = F401
 max-line-length = 80
