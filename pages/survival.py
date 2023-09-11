@@ -10,6 +10,7 @@ import json
 
 import numpy as np
 import dash_bootstrap_components as dbc
+import plotly.graph_objects as go
 
 from dash import dcc
 from dash import html
@@ -198,6 +199,9 @@ def get_survival_analysis_results(n_clicks):
      Input('input-mstage3', 'value')]
 )
 def survival_analysis(t, n, m):
+    global model
+    global accuracy
+
     if t and n and m:
         # Convert from categorical to numerical TNM
         t = re.compile(r'\d').findall(t)
@@ -215,24 +219,20 @@ def survival_analysis(t, n, m):
 
         # Format for table
         prob = survival_prob[0][np.where(classes == vital_status)[0][0]]*100.
-        prob_text = f'{round(prob, 2)}%'
-        accuracy_text = f'{round(accuracy, 2)}'
+        prob_txt = f'{round(prob, 2)}%'
+        accuracy_txt = f'{round(accuracy, 2)}'
 
-        table_header = [
-            html.Thead(html.Tr([
-                html.Th('Vital status'), html.Th('Probability'),
-                html.Th('Accuracy')
-            ]))
-        ]
-        row = html.Tr([
-            html.Td(vital_status), html.Td(prob_text), html.Td(accuracy_text)
+        table = go.Figure(data=[
+            go.Table(
+                header=dict(values=['Vital status', 'Probability', 'Accuracy']),
+                cells=dict(values=[[vital_status], [prob_txt], [accuracy_txt]])
+            )
         ])
-        table_body = [html.Tbody([row])]
 
         # Output for UI
         return html.Div([
             html.H4('Patient 2-years survival prediction:'),
-            dbc.Table(table_header + table_body, bordered=True, hover=True)
+            dcc.Graph(figure=table)
         ],
             style={
                 'width': '50%', 'display': 'inline-block',
