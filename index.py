@@ -47,7 +47,7 @@ sidebar = html.Div(
                     'Survival', href='/survival', active='exact'
                 )),
                 dbc.NavItem(dbc.NavLink(
-                    'Similar patients', href='/similarity',
+                    'Similarity', href='/similarity',
                     active='exact'
                 ))
             ],
