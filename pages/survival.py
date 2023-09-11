@@ -30,6 +30,7 @@ client = None
 task = None
 start = None
 model = None
+accuracy = None
 
 
 # ------------------------------------------------------------------------------
@@ -165,6 +166,7 @@ def get_survival_analysis_results(n_clicks):
     global task
     global start
     global model
+    global accuracy
 
     if n_clicks > 0:
         # Get results for survival analysis
@@ -172,6 +174,7 @@ def get_survival_analysis_results(n_clicks):
         if task_info.get('complete'):
             result_info = client.result.list(task=task_info['id'])
             model = result_info['data'][0]['result']['model']
+            accuracy = result_info['data'][0]['result']['accuracy']
             end = result_info['data'][0]['finished_at']
             duration = round((parser.parse(end).timestamp() - start)/60., 3)
 
@@ -206,19 +209,30 @@ def survival_analysis(t, n, m):
 
         # Get prediction based on model
         X = np.array([[t, n, m]])
+        vital_status = model.predict(X)
         survival_prob = model.predict_proba(X)
         classes = model.classes_
 
-        # Format for bar
-        prob = survival_prob[0][np.where(classes == 'alive')[0][0]]*100.
+        # Format for table
+        prob = survival_prob[0][np.where(classes == vital_status)[0][0]]*100.
         prob_text = f'{round(prob, 2)}%'
+        accuracy_text = f'{round(accuracy, 2)}'
+
+        table_header = [
+            html.Thead(html.Tr([
+                html.Th('Vital status'), html.Th('Probability'),
+                html.Th('Accuracy')
+            ]))
+        ]
+        row = html.Tr([
+            html.Td(vital_status), html.Td(prob_text), html.Td(accuracy_text)
+        ])
+        table_body = [html.Tbody([row])]
 
         # Output for UI
         return html.Div([
-            html.H4('Patient 2-years survival chance:'),
-            dbc.Progress(
-                value=prob, label=prob_text, color='success', className='mb-3'
-            )
+            html.H4('Patient 2-years survival prediction:'),
+            dbc.Table(table_header + table_body, bordered=True, hover=True)
         ],
             style={
                 'width': '50%', 'display': 'inline-block',
